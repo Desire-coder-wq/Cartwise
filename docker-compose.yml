@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Backend API service
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - FRONTEND_URL=http://frontend
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - grocery-buddy-network
+
+  # Frontend service
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - grocery-buddy-network
+
+  # PostgreSQL database (for local development)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-grocerybuddy}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-grocerybuddy}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - grocery-buddy-network
+
+volumes:
+  postgres_data:
+
+networks:
+  grocery-buddy-network:
+    driver: bridge
