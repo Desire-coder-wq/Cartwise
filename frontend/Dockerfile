@@ -34,6 +34,7 @@ RUN echo '{"status":"ok"}' > /usr/share/nginx/html/health.json
 
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=3s --cmd curl -f http://localhost/ || exit 1
+# FIXED: Changed --cmd to CMD (no dash)
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

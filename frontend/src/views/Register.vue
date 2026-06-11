@@ -253,33 +253,36 @@ const handleRegister = async () => {
   display: flex;
   width: 100%;
   max-width: 1200px;
-  gap: 60px;
-  align-items: center;
+  gap: 40px;
+  align-items: stretch;
+  justify-content: center;
   margin: 0 auto;
   padding: 40px;
+  min-height: 100vh;
 }
 
 .form-section {
   flex: 1;
-  max-width: 450px;
+  max-width: 500px;
   padding: 20px 0;
 }
 
 .image-section {
   flex: 1;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   position: relative;
   min-height: 100vh;
-  margin: -40px -40px -40px 0;
+  overflow: hidden;
+  border-radius: 20px 0 0 20px;
 }
 
 .image-section img {
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
+  width: 120%;
+  height: 100vh;
   object-fit: cover;
+  object-position: center;
   border-radius: 20px 0 0 20px;
   box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
 }
