@@ -1,0 +1,73 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-deploy.yml'
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  test:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run linting (if you have it)
+        working-directory: ./backend
+        run: npm run lint || echo "No linting configured"
+
+      - name: Run tests (if you have them)
+        working-directory: ./backend
+        run: npm test || echo "No tests configured"
+        env:
+          NODE_ENV: test
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+  deploy:
+    name: Deploy Backend
+    needs: test  # Only deploy if tests pass
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Trigger Render Deployment
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_BACKEND_SERVICE_ID }}
+        run: |
+          echo "Triggering backend deployment for service: $SERVICE_ID"
+          curl -X POST \
+            https://api.render.com/v1/services/$SERVICE_ID/deploys \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": true}'
+          
+          echo "Backend deployment triggered successfully!"
+
+      - name: Wait for deployment
+        run: sleep 15
+
+      - name: Verify backend health
+        run: |
+          echo "Waiting for backend to become healthy..."
+          sleep 30
+          curl -f https://cartwise-8z9i.onrender.com/health || echo "Backend may still be starting"

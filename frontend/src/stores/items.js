@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
+import api from '../api.js'
 
 export const useItemsStore = defineStore('items', () => {
   const items = ref([])
@@ -15,7 +15,7 @@ export const useItemsStore = defineStore('items', () => {
   const fetchItems = async () => {
     loading.value = true
     try {
-      const response = await axios.get('/api/items')
+      const response = await api.get('/api/items')
       if (response.data.success) {
         items.value = response.data.items
       }
@@ -28,7 +28,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/items/stats')
+      const response = await api.get('/api/items/stats')
       if (response.data.success) {
         stats.value = response.data.stats
       }
@@ -39,7 +39,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const addItem = async (itemData) => {
     try {
-      const response = await axios.post('/api/items', itemData)
+      const response = await api.post('/api/items', itemData)
       if (response.data.success) {
         items.value.unshift(response.data.item)
         await fetchStats()
@@ -56,7 +56,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const updateItem = async (id, itemData) => {
     try {
-      const response = await axios.put(`/api/items/${id}`, itemData)
+      const response = await api.put(`/api/items/${id}`, itemData)
       if (response.data.success) {
         const index = items.value.findIndex(item => item.id === id)
         if (index !== -1) {
@@ -75,7 +75,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const toggleItem = async (id) => {
     try {
-      const response = await axios.patch(`/api/items/${id}/toggle`)
+      const response = await api.patch(`/api/items/${id}/toggle`)
       if (response.data.success) {
         const index = items.value.findIndex(item => item.id === id)
         if (index !== -1) {
@@ -95,7 +95,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const deleteItem = async (id) => {
     try {
-      const response = await axios.delete(`/api/items/${id}`)
+      const response = await api.delete(`/api/items/${id}`)
       if (response.data.success) {
         items.value = items.value.filter(item => item.id !== id)
         await fetchStats()
@@ -112,7 +112,7 @@ export const useItemsStore = defineStore('items', () => {
 
   const clearCompleted = async () => {
     try {
-      const response = await axios.delete('/api/items/completed/clear')
+      const response = await api.delete('/api/items/completed/clear')
       if (response.data.success) {
         items.value = items.value.filter(item => !item.completed)
         await fetchStats()

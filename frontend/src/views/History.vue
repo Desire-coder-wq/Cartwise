@@ -83,7 +83,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import axios from 'axios'
+import api from '../api.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -120,7 +120,7 @@ const formatDate = (dateString) => {
 
 const fetchHistory = async () => {
   try {
-    const response = await axios.get('/history/api')
+    const response = await api.get('/history/api')
     if (response.data.success) {
       history.value = response.data.history
     }
@@ -133,7 +133,7 @@ const fetchHistory = async () => {
 
 const fetchStats = async () => {
   try {
-    const response = await axios.get('/history/stats')
+    const response = await api.get('/history/stats')
     if (response.data.success) {
       stats.value = response.data.stats
     }
@@ -148,7 +148,7 @@ const handleClearHistory = async () => {
   }
   
   try {
-    const response = await axios.delete('/history/clear-all')
+    const response = await api.delete('/history/clear-all')
     if (response.data.success) {
       history.value = []
       stats.value = {

@@ -80,7 +80,29 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+
+
+
+
+// Welcome route
 // Routes
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Cartwise API is running!',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      documentation: '/api-docs',
+      auth: '/auth',
+      items: '/api/items',
+      dashboard: '/dashboard',
+      history: '/history'
+    }
+  });
+});
+
+
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/dashboard', require('./routes/dashboardRoutes'));

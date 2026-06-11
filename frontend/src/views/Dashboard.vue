@@ -224,6 +224,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useItemsStore } from '../stores/items'
+import api from '../api.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -295,11 +296,8 @@ const handleClearCompleted = async () => {
 const handleClearAll = async () => {
   if (confirm('Are you sure you want to clear all items? This will move them to history.')) {
     try {
-      const response = await fetch('/history/clear-shopping-list', {
-        method: 'DELETE'
-      })
-      const data = await response.json()
-      if (data.success) {
+      const response = await api.delete('/history/clear-shopping-list')
+      if (response.data.success) {
         await itemsStore.fetchItems()
         await itemsStore.fetchStats()
       }

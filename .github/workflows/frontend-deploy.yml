@@ -1,0 +1,41 @@
+name: Deploy Frontend to Render
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-deploy.yml'
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Trigger Render Deployment
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_FRONTEND_SERVICE_ID }}
+        run: |
+          echo "Triggering deployment for service: $SERVICE_ID"
+          curl -X POST \
+            https://api.render.com/v1/services/$SERVICE_ID/deploys \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": true}'
+          
+          echo "Deployment triggered successfully!"
+
+      - name: Wait for deployment
+        run: sleep 10
+
+      - name: Verify deployment
+        run: |
+          echo "Waiting for service to become healthy..."
+          sleep 30
+          curl -f https://cartwise-frontend.onrender.com/health || echo "Service may still be starting"

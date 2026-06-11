@@ -77,7 +77,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import axios from 'axios'
+import api from '../api.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -106,7 +106,7 @@ const handleImageChange = async (event) => {
   formData.append('profileImage', file)
   
   try {
-    const response = await axios.post('/dashboard/profile/upload-image', formData, {
+    const response = await api.post('/dashboard/profile/upload-image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -123,7 +123,7 @@ const handleImageChange = async (event) => {
 
 const handleUpdateProfile = async () => {
   try {
-    const response = await axios.post('/dashboard/update-status', {
+    const response = await api.post('/dashboard/update-status', {
       status: status.value
     })
     
@@ -148,7 +148,7 @@ const handleChangePassword = async () => {
   }
   
   try {
-    const response = await axios.post('/dashboard/profile/password', {
+    const response = await api.post('/dashboard/profile/password', {
       currentPassword: currentPassword.value,
       newPassword: newPassword.value
     })
@@ -170,7 +170,7 @@ const handleDeleteAccount = async () => {
   }
   
   try {
-    const response = await axios.delete('/dashboard/profile/delete')
+    const response = await api.delete('/dashboard/profile/delete')
     
     if (response.data.success) {
       await authStore.logout()

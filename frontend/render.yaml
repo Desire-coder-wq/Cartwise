@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: cartwise-frontend
+    runtime: image
+    repo: https://github.com/Desire-coder-wq/Cartwise
+    branch: main
+    rootDir: frontend
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://cartwise-8z9i.onrender.com
+    healthCheckPath: /health
+    autoDeploy: true

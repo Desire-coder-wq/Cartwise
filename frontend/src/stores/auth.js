@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import api from '../api.js'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('/auth/check-auth')
+      const response = await api.get('/auth/check-auth')
       if (response.data.isAuthenticated) {
         user.value = response.data.user
         isAuthenticated.value = true
@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (email, password, rememberMe = false) => {
     loading.value = true
     try {
-      const response = await axios.post('/auth/login', {
+      const response = await api.post('/auth/login', {
         email,
         password,
         rememberMe
@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (formData) => {
     loading.value = true
     try {
-      const response = await axios.post('/auth/register', formData, {
+      const response = await api.post('/auth/register', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await axios.post('/auth/logout')
+      await api.post('/auth/logout')
       user.value = null
       isAuthenticated.value = false
       return { success: true }
