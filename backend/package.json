@@ -1,7 +1,7 @@
 {
-  "name": "grocery-buddy-backend",
+  "name": "Cartwise-backend",
   "version": "1.0.0",
-  "description": "Grocery Buddy Backend API with PostgreSQL",
+  "description": "Cartwise Backend API with PostgreSQL",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
